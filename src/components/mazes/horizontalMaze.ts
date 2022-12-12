@@ -9,7 +9,7 @@ export const generateHorizontalMaze = (grid: CellInterface[][]) => {
         (i === 0 ||
           j === 0 ||
           i === grid.length - 1 ||
-          j === grid.length - 1 ||
+          j === grid[0].length - 1 ||
           ((i === 10 || i === 30) && j > 4 && j < 35))
       ) {
         currentCell.isWall = true;

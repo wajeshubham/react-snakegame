@@ -5,6 +5,15 @@ import { getCellObjects, getFoodCell } from "../utils";
 import Cell from "./Cell";
 import { generateBoundedMaze } from "./mazes/boundedMaze";
 import { generateHorizontalMaze } from "./mazes/horizontalMaze";
+import {
+  CubeTransparentIcon,
+  StarIcon,
+  PlayIcon,
+  PauseIcon,
+  CommandLineIcon,
+} from "@heroicons/react/24/outline";
+
+let interval: number;
 
 const GameBoard = () => {
   const gameBoard = useRef(getCellObjects());
@@ -12,32 +21,32 @@ const GameBoard = () => {
   const snakeDirection = useRef<"up" | "down" | "right" | "left">("right");
   const [snakeBody, setSnakeBody] = useState<number[][]>([[20, 20]]);
   const [renderFlag, setRenderFlag] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
   const [play, setPlay] = useState(false);
 
   const resetBoard = () => {
     gameBoard.current = getCellObjects();
-    setSnakeBody([[20, 20]]);
+    setSnakeBody((prev) => [[20, 20]]);
     setFood(getFoodCell(gameBoard.current));
     setPlay(false);
+    clearInterval(interval);
   };
 
   const getNextRowAndColByDirection = (row: number, col: number) => {
     switch (snakeDirection.current) {
       case "up":
-        if (row === 0) row = 39;
+        if (row === 0) row = gameBoard.current.length - 1;
         else row--;
         break;
       case "down":
-        if (row === 39) row = 0;
+        if (row === gameBoard.current.length - 1) row = 0;
         else row++;
         break;
       case "left":
-        if (col === 0) col = 39;
+        if (col === 0) col = gameBoard.current[0].length;
         else col--;
         break;
       case "right":
-        if (col === 39) col = 0;
+        if (col === gameBoard.current[0].length) col = 0;
         else col++;
         break;
     }
@@ -65,8 +74,21 @@ const GameBoard = () => {
 
   const handleEatAndGameOver = (snakeRow: number, snakeCol: number) => {
     const snakeHead = gameBoard.current[snakeRow][snakeCol]; // see if snake head has touched the
-    if (snakeHead.isWall) {
+    if (snakeHead?.isWall) {
       resetBoard();
+      alert("Game over! Please start over.");
+      return;
+    }
+
+    let snakeBodyWithoutHead = snakeBody.slice(1);
+    if (
+      snakeBodyWithoutHead.length >= 3 &&
+      snakeBodyWithoutHead.some((item) => {
+        return item[0] === snakeRow && item[1] === snakeCol;
+      })
+    ) {
+      resetBoard();
+      alert("Game over! Please start over.");
       return;
     }
 
@@ -91,7 +113,7 @@ const GameBoard = () => {
 
   useEffect(() => {
     if (!play) return;
-    let interval = handleSnakeTravel();
+    interval = handleSnakeTravel();
     return () => {
       clearInterval(interval);
     };
@@ -130,41 +152,79 @@ const GameBoard = () => {
     return () => window.removeEventListener("keydown", handleOnKeyDown, false);
   }, [play]);
 
-  const onMouseEnter = (rowIndex: number, colIndex: number) => {
-    setRenderFlag(!renderFlag);
-    let element = gameBoard.current[rowIndex][colIndex];
-    if (!isMouseDown) return;
-    if (element.isSnakeBodyPart) return;
-    element.isWall = !element.isWall;
-  };
-
   return (
     <>
-      <button
-        onClick={() => {
-          setPlay(!play);
-        }}
-      >
-        {play ? "Pause" : "Play"}
-      </button>
+      <div className="w-full bg-gray-900">
+        <div className="flex md:gap-0 flex-wrap gap-4 flex-1 py-4 max-w-7xl md:flex-row flex-col items-start md:items-center justify-center space-x-4 mx-auto">
+          <button
+            className="w-fit items-center ml-4 md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+            onClick={() => {
+              resetBoard();
+              generateBoundedMaze(gameBoard.current);
+              setRenderFlag(!renderFlag);
+            }}
+          >
+            <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate bounded
+            maze
+          </button>
+          <span
+            className="md:block hidden h-6 w-px bg-gray-600"
+            aria-hidden="true"
+          />
+          <button
+            className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+            onClick={() => {
+              resetBoard();
+              generateHorizontalMaze(gameBoard.current);
+              setRenderFlag(!renderFlag);
+            }}
+          >
+            <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate horizontal
+            maze
+          </button>
+          <span
+            className="md:block hidden h-6 w-px bg-gray-600"
+            aria-hidden="true"
+          />
+          <button className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md">
+            <StarIcon className="w-4 h-4 mr-2" /> Score: {snakeBody.length - 1}
+          </button>
+          <span
+            className="md:block hidden h-6 w-px bg-gray-600"
+            aria-hidden="true"
+          />
 
-      <button
-        onClick={() => {
-          generateBoundedMaze(gameBoard.current);
-          setRenderFlag(!renderFlag);
-        }}
+          <button
+            onClick={() => {
+              setPlay(!play);
+            }}
+            className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            {play ? (
+              <PauseIcon className="w-4 h-4 mr-2" />
+            ) : (
+              <PlayIcon className="w-4 h-4 mr-2" />
+            )}{" "}
+            {play ? "Pause" : "Play"}
+          </button>
+
+          <a
+            href="https://github.com/wajeshubham/react-snakegame"
+            target={"_blank"}
+            className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            <CommandLineIcon className="w-4 h-4 mr-2" />
+            Source code
+          </a>
+        </div>
+      </div>
+      <a
+        href="https://github.com/wajeshubham/react-snakegame"
+        target={"_blank"}
+        className="underline text-blue-700 pr-4 inline-flex justify-end items-center w-full"
       >
-        Generate bounded maze
-      </button>
-      <button
-        onClick={() => {
-          generateHorizontalMaze(gameBoard.current);
-          setRenderFlag(!renderFlag);
-        }}
-      >
-        Generate horizontal maze
-      </button>
-      <p>Score: {snakeBody.length - 1}</p>
+        By - https://github/wajeshubham
+      </a>
       <div className="grid grid-cols-gridmap overflow-auto w-full px-4 justify-start md:justify-center items-center my-3">
         {gameBoard.current.map((row, rowIndex) => {
           return (
@@ -175,15 +235,6 @@ const GameBoard = () => {
                     key={colIndex}
                     id={`cell-${cell.row}-${cell.col}`}
                     {...cell}
-                    onMouseDown={() => {
-                      setIsMouseDown(true);
-                    }}
-                    onMouseEnter={() => {
-                      onMouseEnter(rowIndex, colIndex);
-                    }}
-                    onMouseUp={() => {
-                      setIsMouseDown(false);
-                    }}
                   />
                 );
               })}
