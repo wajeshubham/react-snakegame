@@ -219,11 +219,11 @@ const GameBoard = () => {
         </div>
       </div>
       <a
-        href="https://github.com/wajeshubham/react-snakegame"
+        href="https://github.com/wajeshubham"
         target={"_blank"}
         className="underline text-blue-700 pr-4 inline-flex justify-end items-center w-full"
       >
-        By - https://github/wajeshubham
+        By - https://github.com/wajeshubham
       </a>
       <div className="grid grid-cols-gridmap overflow-auto w-full px-4 justify-start md:justify-center items-center my-3">
         {gameBoard.current.map((row, rowIndex) => {
