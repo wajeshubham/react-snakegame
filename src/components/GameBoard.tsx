@@ -11,6 +11,10 @@ import {
   PlayIcon,
   PauseIcon,
   CommandLineIcon,
+  ArrowUpIcon,
+  ArrowLeftIcon,
+  ArrowDownIcon,
+  ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 
 let interval: number;
@@ -154,77 +158,6 @@ const GameBoard = () => {
 
   return (
     <>
-      <div className="w-full bg-gray-900">
-        <div className="flex md:gap-0 flex-wrap gap-4 flex-1 py-4 max-w-7xl md:flex-row flex-col items-start md:items-center justify-center space-x-4 mx-auto">
-          <button
-            className="w-fit items-center ml-4 md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
-            onClick={() => {
-              resetBoard();
-              generateBoundedMaze(gameBoard.current);
-              setRenderFlag(!renderFlag);
-            }}
-          >
-            <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate bounded
-            maze
-          </button>
-          <span
-            className="md:block hidden h-6 w-px bg-gray-600"
-            aria-hidden="true"
-          />
-          <button
-            className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
-            onClick={() => {
-              resetBoard();
-              generateHorizontalMaze(gameBoard.current);
-              setRenderFlag(!renderFlag);
-            }}
-          >
-            <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate horizontal
-            maze
-          </button>
-          <span
-            className="md:block hidden h-6 w-px bg-gray-600"
-            aria-hidden="true"
-          />
-          <button className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md">
-            <StarIcon className="w-4 h-4 mr-2" /> Score: {snakeBody.length - 1}
-          </button>
-          <span
-            className="md:block hidden h-6 w-px bg-gray-600"
-            aria-hidden="true"
-          />
-
-          <button
-            onClick={() => {
-              setPlay(!play);
-            }}
-            className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
-          >
-            {play ? (
-              <PauseIcon className="w-4 h-4 mr-2" />
-            ) : (
-              <PlayIcon className="w-4 h-4 mr-2" />
-            )}{" "}
-            {play ? "Pause" : "Play"}
-          </button>
-
-          <a
-            href="https://github.com/wajeshubham/react-snakegame"
-            target={"_blank"}
-            className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
-          >
-            <CommandLineIcon className="w-4 h-4 mr-2" />
-            Source code
-          </a>
-        </div>
-      </div>
-      <a
-        href="https://github.com/wajeshubham"
-        target={"_blank"}
-        className="underline text-blue-700 pr-4 inline-flex justify-end items-center w-full"
-      >
-        By - https://github.com/wajeshubham
-      </a>
       <div className="grid grid-cols-gridmap overflow-auto w-full px-4 justify-start md:justify-center items-center my-3">
         {gameBoard.current.map((row, rowIndex) => {
           return (
@@ -241,6 +174,122 @@ const GameBoard = () => {
             </React.Fragment>
           );
         })}
+      </div>
+      <div className="flex justify-center items-center w-full flex-col gap-3 mb-10">
+        <div className="flex justify-center items-center">
+          <button
+            onClick={() => {
+              handleOnKeyDown({ key: "ArrowUp" } as KeyboardEvent);
+            }}
+            className="w-fit items-center md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            <ArrowUpIcon className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="flex justify-center items-center gap-3">
+          <button
+            onClick={() => {
+              handleOnKeyDown({ key: "ArrowLeft" } as KeyboardEvent);
+            }}
+            className="w-fit items-center md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            <ArrowLeftIcon className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              handleOnKeyDown({ key: "ArrowDown" } as KeyboardEvent);
+            }}
+            className="w-fit items-center md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            <ArrowDownIcon className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              handleOnKeyDown({ key: "ArrowRight" } as KeyboardEvent);
+            }}
+            className="w-fit items-center md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+          >
+            <ArrowRightIcon className="w-4 h-4" />
+          </button>
+        </div>
+        <small className="mx-2 text-center">
+          Use these keys if you are on a mobile phone, otherwise use your
+          keyboard keys.
+        </small>
+      </div>
+      <div className="relative md:absolute bottom-0 w-full">
+        <a
+          href="https://github.com/wajeshubham"
+          target={"_blank"}
+          className="underline text-blue-700 pr-4 inline-flex justify-end items-center w-full"
+        >
+          By - https://github.com/wajeshubham
+        </a>
+        <div className="w-full bg-gray-900">
+          <div className="flex md:gap-0 flex-wrap gap-4 flex-1 py-4 max-w-7xl md:flex-row flex-col items-start md:items-center justify-center space-x-4 mx-auto">
+            <button
+              className="w-fit items-center ml-4 md:ml-0 disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+              onClick={() => {
+                resetBoard();
+                generateBoundedMaze(gameBoard.current);
+                setRenderFlag(!renderFlag);
+              }}
+            >
+              <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate bounded
+              maze
+            </button>
+            <span
+              className="md:block hidden h-6 w-px bg-gray-600"
+              aria-hidden="true"
+            />
+            <button
+              className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+              onClick={() => {
+                resetBoard();
+                generateHorizontalMaze(gameBoard.current);
+                setRenderFlag(!renderFlag);
+              }}
+            >
+              <CubeTransparentIcon className="w-4 h-4 mr-2" /> Generate
+              horizontal maze
+            </button>
+            <span
+              className="md:block hidden h-6 w-px bg-gray-600"
+              aria-hidden="true"
+            />
+            <button className="w-fit disabled:bg-gray-400 items-center disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md">
+              <StarIcon className="w-4 h-4 mr-2" /> Score:{" "}
+              {snakeBody.length - 1}
+            </button>
+            <span
+              className="md:block hidden h-6 w-px bg-gray-600"
+              aria-hidden="true"
+            />
+
+            <button
+              onClick={() => {
+                setPlay(!play);
+              }}
+              className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+            >
+              {play ? (
+                <PauseIcon className="w-4 h-4 mr-2" />
+              ) : (
+                <PlayIcon className="w-4 h-4 mr-2" />
+              )}{" "}
+              {play ? "Pause" : "Play"}
+            </button>
+
+            <a
+              href="https://github.com/wajeshubham/react-snakegame"
+              target={"_blank"}
+              className="w-fit items-center disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
+            >
+              <CommandLineIcon className="w-4 h-4 mr-2" />
+              Source code
+            </a>
+          </div>
+        </div>
       </div>
     </>
   );
